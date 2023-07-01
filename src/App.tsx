@@ -4,12 +4,16 @@ import KoderItem from './components/KoderItem';
 function App() {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [fullNames, setFullName] = useState<string[]>([]);
+  const [koders, setKoders] = useState<object[]>([]);
 
   function onAddItem() {
-    setFullName([`${name} ${lastName}`, ...fullNames]);
-    setName('');
-    setLastName('');
+    if (name && lastName) {
+      setKoders([{ name, lastName }, ...koders]);
+      setName('');
+      setLastName('');
+    } else {
+      alert('One or more of the inputs are empty');
+    }
   }
 
   function onEnter(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -17,8 +21,8 @@ function App() {
   }
 
   function onDelete(indexToDelete: number) {
-    fullNames.splice(indexToDelete, 1);
-    setFullName([...fullNames]);
+    koders.splice(indexToDelete, 1);
+    setKoders([...koders]);
   }
 
   return (
@@ -53,11 +57,12 @@ function App() {
               </button>
             </div>
             <ul className='pb-5'>
-              {fullNames.map((fullName, index) => {
+              {koders.map((koder, index) => {
+                console.log(koder);
                 return (
                   <KoderItem
                     key={`item-${index}`}
-                    fullName={fullName}
+                    koder={koder}
                     onDelete={() => onDelete(index)}
                   />
                 );
@@ -66,7 +71,7 @@ function App() {
             <div className='flex'>
               <button
                 className='bg-indigo-500 h-10 rounded grow'
-                onClick={() => setFullName([])}
+                onClick={() => setKoders([])}
               >
                 🗑️ Delete Everything 🗑️
               </button>

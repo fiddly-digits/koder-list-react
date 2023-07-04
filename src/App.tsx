@@ -33,7 +33,7 @@ function App() {
     <>
       <div className='min-h-screen font-sans bg-neutral-900 text-white'>
         <div className='flex flex-wrap justify-center pt-5'>
-          <div className='border border-slate-200 p-20'>
+          <div className='border border-slate-200 sm:p-20 p-5'>
             <h1 className='text-center text-5xl pb-5'>KODER LIST 📝</h1>
             <div className='flex justify-between gap-5 py-5'>
               <input

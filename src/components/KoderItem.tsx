@@ -1,8 +1,7 @@
+import Koder from '../data/koder';
+
 interface Props {
-  koder: {
-    name: string;
-    lastName: string;
-  };
+  koder: Koder;
   onDelete: () => void;
 }
 

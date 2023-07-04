@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import KoderItem from './components/KoderItem';
+import Koder from './data/koder';
 
 function App() {
+  const nameInput = useRef<HTMLInputElement>(null);
+  const lastNameInput = useRef<HTMLInputElement>(null);
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [koders, setKoders] = useState<object[]>([]);
+  const [koders, setKoders] = useState<Koder[]>([]);
 
   function onAddItem() {
     if (name && lastName) {
       setKoders([{ name, lastName }, ...koders]);
       setName('');
       setLastName('');
+      lastNameInput.current?.blur();
+      nameInput.current?.focus();
     } else {
       alert('One or more of the inputs are empty');
     }
@@ -20,9 +25,8 @@ function App() {
     if (event.key === 'Enter') onAddItem();
   }
 
-  function onDelete(indexToDelete: number) {
-    koders.splice(indexToDelete, 1);
-    setKoders([...koders]);
+  function onDelete(koderToDelete: Koder) {
+    setKoders(koders.filter((koder) => koder !== koderToDelete));
   }
 
   return (
@@ -34,6 +38,7 @@ function App() {
             <div className='flex justify-between gap-5 py-5'>
               <input
                 type='text'
+                ref={nameInput}
                 placeholder='First Name'
                 className='border border-slate-800 grow rounded text-black'
                 onChange={(event) => setName(event.target.value)}
@@ -42,6 +47,7 @@ function App() {
               />
               <input
                 type='text'
+                ref={lastNameInput}
                 placeholder='Last Name'
                 className='border border-slate-800 grow rounded text-black'
                 onChange={(event) => setLastName(event.target.value)}
@@ -63,14 +69,14 @@ function App() {
                   <KoderItem
                     key={`item-${index}`}
                     koder={koder}
-                    onDelete={() => onDelete(index)}
+                    onDelete={() => onDelete(koder)}
                   />
                 );
               })}
             </ul>
             <div className='flex'>
               <button
-                className='bg-indigo-500 h-10 rounded grow'
+                className='bg-sky-500 h-10 rounded grow'
                 onClick={() => setKoders([])}
               >
                 🗑️ Delete Everything 🗑️

@@ -1,28 +1,24 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import KoderItem from './components/KoderItem';
 import Koder from './data/koder';
+import clsx from 'clsx';
 
 function App() {
-  const nameInput = useRef<HTMLInputElement>(null);
-  const lastNameInput = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const {
+    register,
+    handleSubmit,
+    reset,
+    resetField,
+    formState: { errors }
+  } = useForm<Koder>();
   const [koders, setKoders] = useState<Koder[]>([]);
 
-  function onAddItem() {
-    if (name && lastName) {
-      setKoders([{ name, lastName }, ...koders]);
-      setName('');
-      setLastName('');
-      lastNameInput.current?.blur();
-      nameInput.current?.focus();
-    } else {
-      alert('One or more of the inputs are empty');
-    }
-  }
-
-  function onEnter(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') onAddItem();
+  function onSubmit(data: Koder) {
+    console.log(data);
+    setKoders([data, ...koders]);
+    reset();
+    resetField('name');
   }
 
   function onDelete(koderToDelete: Koder) {
@@ -35,33 +31,42 @@ function App() {
         <div className='flex flex-wrap justify-center pt-5'>
           <div className='border border-slate-200 p-20'>
             <h1 className='text-center text-5xl pb-5'>KODER LIST 📝</h1>
-            <div className='flex justify-between gap-5 py-5'>
+            <form
+              className='flex justify-between gap-5 py-5'
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <input
                 type='text'
-                ref={nameInput}
                 placeholder='First Name'
-                className='border border-slate-800 grow rounded text-black'
-                onChange={(event) => setName(event.target.value)}
-                onKeyUp={onEnter}
-                value={name}
+                className={clsx(
+                  'border border-slate-800 grow rounded text-black',
+                  { 'border-red-500': errors.name }
+                )}
+                {...register('name', {
+                  required: { value: true, message: 'Name is Required' },
+                  minLength: { value: 3, message: 'Min Length Required is 3' }
+                })}
               />
               <input
                 type='text'
-                ref={lastNameInput}
                 placeholder='Last Name'
                 className='border border-slate-800 grow rounded text-black'
-                onChange={(event) => setLastName(event.target.value)}
-                onKeyUp={onEnter}
-                value={lastName}
+                {...register('lastName', {
+                  required: { value: true, message: 'Name is Required' },
+                  minLength: { value: 3, message: 'Min Length Required is 3' }
+                })}
               />
               <button
                 type='submit'
                 className='bg-slate-200 w-8 h-8 text-black rounded'
-                onClick={onAddItem}
               >
                 +
               </button>
-            </div>
+            </form>
+            {errors.lastName && (
+              <p className='text-center pb-5'>{errors.name?.message}</p>
+            )}
+
             <ul className='pb-5'>
               {koders.map((koder, index) => {
                 console.log(koder);
